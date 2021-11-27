@@ -39,7 +39,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def user_directory_path(instance, filename):
         # путь, куда будет осуществлена загрузка MEDIA_ROOT/user_<id>_<filename>
-        return 'images/user_{0}_{1}'.format(instance.id, filename)
+        return 'images/user_{0}_{1}'.format(instance, filename)
     avatar = models.ImageField(verbose_name="Avatar", null=True, blank=True, upload_to=user_directory_path)
 
     Male = 'M'

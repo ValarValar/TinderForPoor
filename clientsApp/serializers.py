@@ -9,8 +9,8 @@ def validate_passwords_similar(pass1, pass2, message='passwords are not equal! '
         # Если нет, то выводим ошибку
         raise serializers.ValidationError(message)
 
-def validate_letters(str, message='Str can contain only letters!'):
-    if not str.isalpha():
+def validate_letters(check_str, message='Str can contain only letters!'):
+    if not (check_str.isalpha()):
         raise serializers.ValidationError(message)
 
 
@@ -31,8 +31,11 @@ class UserRegistrSerializer(serializers.ModelSerializer):
         # Создаём объект класса User
         user = User(email=self.validated_data['email'])
         user.sex = self.validated_data['sex']
-        validate_letters('first_name', 'Name should contain only letters')
-        validate_letters('last_name', 'Name should contain only letters')
+        # Проверяем что поля имени содержат только буквы
+        validate_letters(self.validated_data['first_name'],
+                         'Name should contain only english letters')
+        validate_letters(self.validated_data['first_name'],
+                         'Name should contain only english letters')
         user.first_name = self.validated_data['first_name']
         user.last_name = self.validated_data['last_name']
         user.avatar = self.validated_data['avatar']
