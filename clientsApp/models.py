@@ -2,8 +2,6 @@ from django.db import models
 
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
-from django.core import validators
-import re
 class MyUserManager(BaseUserManager):
     use_in_migrations = True
 
@@ -37,10 +35,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=30)
     is_staff = models.BooleanField(default=False)
 
+
     def user_directory_path(instance, filename):
         # путь, куда будет осуществлена загрузка MEDIA_ROOT/user_<id>_<filename>
         return 'images/user_{0}_{1}'.format(instance, filename)
     avatar = models.ImageField(verbose_name="Avatar", null=True, blank=True, upload_to=user_directory_path)
+
 
     Male = 'M'
     Female = 'F'
@@ -73,4 +73,5 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_short_name(self):
         return self.first_name
+
 

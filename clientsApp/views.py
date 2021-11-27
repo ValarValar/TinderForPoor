@@ -6,13 +6,13 @@ from rest_framework import status
 # Подключаем компонент для ответа
 from rest_framework.response import Response
 # Подключаем компонент для создания данных
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView
 # Подключаем компонент для прав доступа
 from rest_framework.permissions import AllowAny
 # Подключаем модель User
 from .models import User
 # Подключаем UserRegistrSerializer
-from .serializers import UserRegistrSerializer
+from .serializers import UserRegistrSerializer, UserSerializer
 
 
 # Создаём класс RegistrUserView
@@ -43,3 +43,17 @@ class RegistrUserView(CreateAPIView):
             data = serializer.errors
             # Возвращаем ошибку
             return Response(data)
+
+class UserList(ListAPIView):
+    """
+    API endpoint that represents a list of users.
+    """
+    # Добавляем в queryset
+    queryset = User.objects.all()
+    # Добавляем serializer UserRegistrSerializer
+    serializer_class = UserRegistrSerializer
+    # Добавляем права доступа
+
+    permission_classes = [AllowAny]
+
+    serializer_class = UserSerializer
