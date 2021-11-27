@@ -2,6 +2,8 @@ from django.db import models
 
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
+from django.core import validators
+import re
 class MyUserManager(BaseUserManager):
     use_in_migrations = True
 
@@ -31,9 +33,9 @@ class MyUserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=100, unique=True)
-    first_name = models.CharField(max_length=30)
+    first_name = models.CharField(max_length=30,)
     last_name = models.CharField(max_length=30)
-    is_staff = models.BooleanField(default=False)  # Статус админа
+    is_staff = models.BooleanField(default=False)
 
     def user_directory_path(instance, filename):
         # путь, куда будет осуществлена загрузка MEDIA_ROOT/user_<id>_<filename>
@@ -46,7 +48,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         (Male, 'Male'),
         (Female, 'Female'),
     )
-    Sex = models.CharField(
+    sex = models.CharField(
         max_length=1,
         choices=sex_Choices,
         default=Female,
