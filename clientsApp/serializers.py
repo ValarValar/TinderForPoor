@@ -6,7 +6,6 @@ from .models import User
 from .watermark import watermark
 from PIL import Image
 
-
 def watermarkImage(filename):
     converted_image_name = filename + ".png"
     im = Image.open(filename)
@@ -77,9 +76,10 @@ class UserRegistrSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     avatar = serializers.ImageField()
+    avatar = User.avatar
     class Meta:
         # Поля модели которые будем использовать
         model = User
         # Назначаем поля которые будем использовать
-        fields = ['email', 'first_name', 'last_name', 'sex', 'avatar']
-    avatar = User.avatar
+        fields = ['first_name', 'last_name', 'sex', 'avatar']
+
