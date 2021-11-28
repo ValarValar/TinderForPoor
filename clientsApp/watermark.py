@@ -1,4 +1,7 @@
 from imagekit.lib import Image, ImageEnhance
+from io import BytesIO
+from django.core.files import File
+
 
 def reduce_opacity(im, opacity):
     """Returns an image with reduced opacity."""
@@ -12,7 +15,10 @@ def reduce_opacity(im, opacity):
     im.putalpha(alpha)
     return im
 
-def watermark(im, mark, position, opacity=1):
+def watermark(imIN, markIN, position, opacity=1):
+    im = Image.open(imIN)
+    mark = Image.open(markIN)
+
     """Adds a watermark to an image."""
     if opacity < 1:
         mark = reduce_opacity(mark, opacity)
@@ -36,5 +42,10 @@ def watermark(im, mark, position, opacity=1):
     else:
         layer.paste(mark, position)
     # composite the watermark with the layer
-    im.convert('RGB')
-    return Image.composite(layer, im, layer)
+
+    thumb_io = BytesIO()
+    Image.composite(layer, im, layer).save(thumb_io,'PNG')  # save image to BytesIO object
+    watermarkedImg = File(thumb_io, name=imIN.name)
+    im.close()
+    mark.close()
+    return watermarkedImg

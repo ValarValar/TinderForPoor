@@ -1,6 +1,15 @@
 from django.db import models
 
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+
+from .watermark import watermark
+
+### Обертка для накладывания вотермарки. Принимает File, возвращает файл BytesIO
+def watermarkImage(image_file):
+    mark = 'images/watermark/200-star.png'
+    return watermark(image_file, mark, 'scale', 0.45)
+
+
 class MyUserManager(BaseUserManager):
     use_in_migrations = True
 
@@ -62,6 +71,15 @@ class User(AbstractBaseUser, PermissionsMixin):
     # Метод для отображения в админ панели
     def __str__(self):
         return self.email
+
+    def save(self, *args, **kwargs):
+
+        if self.avatar:
+            print(self.avatar)
+            #Сохраняем аватарку на лету с вотермаркой
+            self.avatar = watermarkImage(self.avatar.file)
+
+        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'user'

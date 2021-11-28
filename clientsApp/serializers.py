@@ -53,8 +53,6 @@ class UserRegistrSerializer(serializers.ModelSerializer):
         user.first_name = self.validated_data['first_name']
         user.last_name = self.validated_data['last_name']
         user.avatar = self.validated_data['avatar']
-        print(Image.open(self.validated_data['avatar'].file))
-        #<_io.BytesIO object at 0x000002A3254C7C20>
 
         # Проверяем на валидность пароль
         password = self.validated_data['password']
@@ -67,17 +65,10 @@ class UserRegistrSerializer(serializers.ModelSerializer):
         # Сохраняем пользователя
         user.save()
 
-        if not (user.avatar.name is None):
-            watermarkImage(user.avatar.name)
-        #После того как сохранили пользователя и аватарку, накладываем на его аватарку марку
-
-
         # Возвращаем нового пользователя
         return user
 
 class UserSerializer(serializers.ModelSerializer):
-    avatar = serializers.ImageField()
-    avatar = User.avatar
     class Meta:
         # Поля модели которые будем использовать
         model = User
