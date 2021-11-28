@@ -4,6 +4,8 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 
 from .watermark import watermark
 
+import json
+
 ### Обертка для накладывания вотермарки. Принимает File, возвращает файл BytesIO
 def watermarkImage(image_file):
     mark = 'images/watermark/200-star.png'
@@ -42,13 +44,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=30,)
     last_name = models.CharField(max_length=30)
     is_staff = models.BooleanField(default=False)
-
+    liked_list = models.TextField(blank=True, default="[-1, -2]")
 
     def user_directory_path(instance, filename):
         # путь, куда будет осуществлена загрузка MEDIA_ROOT/user_<id>_<filename>
         return 'images/user_{0}_{1}'.format(instance, filename)
     avatar = models.ImageField(verbose_name="Avatar", null=True, blank=True, upload_to=user_directory_path)
-
 
     Male = 'M'
     Female = 'F'
@@ -91,4 +92,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_short_name(self):
         return self.first_name
 
+    def set_liked_list(self, x):
+        self.liked_list = json.dumps(x)
+
+    def get_liked_list(self):
+        return json.loads(self.liked_list)
 

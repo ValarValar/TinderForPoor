@@ -3,20 +3,8 @@ from rest_framework import serializers
 # Подключаем модель user
 from .models import User
 
-from .watermark import watermark
-from PIL import Image
 
-def watermarkImage(filename):
-    converted_image_name = filename + ".png"
-    im = Image.open(filename)
-    im.save(converted_image_name)
-    im = Image.open(converted_image_name)
-    mark = Image.open('images/watermark/200-star.png')
-    im = watermark(im, mark, 'scale', 0.45)
-    im.save(converted_image_name)
-    im.close()
-    mark.close()
-    return converted_image_name
+
 
 def validate_passwords_similar(pass1, pass2, message='passwords are not equal! '):
     if pass1 != pass2:
@@ -73,5 +61,12 @@ class UserSerializer(serializers.ModelSerializer):
         # Поля модели которые будем использовать
         model = User
         # Назначаем поля которые будем использовать
-        fields = ['first_name', 'last_name', 'sex', 'avatar']
+        fields = ['id', 'first_name', 'last_name', 'sex', 'avatar', 'liked_list']
+
+class UserLikedListSerializer(serializers.ModelSerializer):
+    class Meta:
+        # Поля модели которые будем использовать
+        model = User
+        # Назначаем поля которые будем использовать
+        fields = ['liked_list']
 
