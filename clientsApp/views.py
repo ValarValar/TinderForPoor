@@ -29,6 +29,7 @@ class RegistrUserView(CreateAPIView):
     # Создаём метод для создания нового пользователя
     def post(self, request, *args, **kwargs):
         # Добавляем UserRegistrSerializer
+        print(request.data)
         serializer = UserRegistrSerializer(data=request.data)
         # Создаём список data
         data = {}
