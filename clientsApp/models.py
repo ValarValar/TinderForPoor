@@ -1,9 +1,7 @@
 from django.db import models
-
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-
 from .watermark import watermark
-
+from geopy.distance import great_circle
 import json
 
 ### Обертка для накладывания вотермарки. Принимает File, возвращает файл BytesIO
@@ -45,6 +43,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=30)
     is_staff = models.BooleanField(default=False)
     liked_list = models.TextField(blank=True, default="[-1, -2]")
+    longitude = models.DecimalField(default=0, decimal_places=3, max_digits=6)
+    latitude = models.DecimalField(default=0, decimal_places=3, max_digits=6)
 
     def user_directory_path(instance, filename):
         # путь, куда будет осуществлена загрузка MEDIA_ROOT/user_<id>_<filename>
@@ -97,4 +97,3 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_liked_list(self):
         return json.loads(self.liked_list)
-

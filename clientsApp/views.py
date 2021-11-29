@@ -5,17 +5,18 @@ from rest_framework import status
 from rest_framework.response import Response
 # Подключаем компонент для создания данных
 from rest_framework.generics import CreateAPIView, ListAPIView, UpdateAPIView
-
 from rest_framework.decorators import api_view, permission_classes
-
 # Подключаем компонент для прав доступа
 from rest_framework.permissions import AllowAny
 # Подключаем модель User
 from .models import User
 # Подключаем UserRegistrSerializer
-from .serializers import UserRegistrSerializer, UserSerializer, UserLikedListSerializer
-
+from .serializers import UserRegistrSerializer, UserSerializer
 from rest_framework import generics, mixins, permissions
+from geopy.distance import great_circle
+from django.http import Http404
+
+
 
 # Создаём класс RegistrUserView
 class RegistrUserView(CreateAPIView):
@@ -47,24 +48,27 @@ class RegistrUserView(CreateAPIView):
             return Response(data)
 
 class UserListView(ListAPIView):
-    """
-    API endpoint that represents a list of users.
-    """
-
     serializer_class = UserSerializer
     paginate_by = 10
     permission_classes = [AllowAny]
 
+    def filter_queryset1(self, request, queryset):
+        alluser = queryset.exclude(id=self.request.user.id)
+        exclude_e = alluser
+        distparam = request.GET.get('distance')
+        if distparam:
+            for user in alluser:
+                from_loc = (self.request.user.latitude, self.request.user.latitude)
+                self_loc = (user.latitude, user.longitude)
+                distance = great_circle(from_loc, self_loc).km
+                if distance > float(distparam):
+                    exclude_e = exclude_e.exclude(id=user.id)
+        return exclude_e
     # Фильтрует queryset по значениям из get запросу
     def get_queryset(self):
-        """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
-        """
-        queryset = User.objects.all()
         keys = ['first_name',
                 'last_name',
-                'sex'
+                'sex',
         ]
         filters = {}
         req = self.request
@@ -72,7 +76,9 @@ class UserListView(ListAPIView):
             filter = req.query_params.getlist(key)
             if filter:
                 filters['{}__in'.format(key)] = filter
-
+        queryset = User.objects.all()
+        if req.GET.get('distance') and req.user.is_authenticated:
+            queryset = self.filter_queryset1(req, queryset)
         return queryset.filter(**filters)
 
 @api_view(['PUT'])

@@ -63,10 +63,3 @@ class UserSerializer(serializers.ModelSerializer):
         # Назначаем поля которые будем использовать
         fields = ['id', 'first_name', 'last_name', 'sex', 'avatar', 'liked_list']
 
-class UserLikedListSerializer(serializers.ModelSerializer):
-    class Meta:
-        # Поля модели которые будем использовать
-        model = User
-        # Назначаем поля которые будем использовать
-        fields = ['liked_list']
-
