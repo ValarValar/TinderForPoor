@@ -1,10 +1,9 @@
-from django.shortcuts import render
 # Подключаем статус
 from rest_framework import status
 # Подключаем компонент для ответа
 from rest_framework.response import Response
 # Подключаем компонент для создания данных
-from rest_framework.generics import CreateAPIView, ListAPIView, UpdateAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView
 from rest_framework.decorators import api_view, permission_classes
 # Подключаем компонент для прав доступа
 from rest_framework.permissions import AllowAny
@@ -12,11 +11,28 @@ from rest_framework.permissions import AllowAny
 from .models import User
 # Подключаем UserRegistrSerializer
 from .serializers import UserRegistrSerializer, UserSerializer
-from rest_framework import generics, mixins, permissions
+from rest_framework import permissions
 from geopy.distance import great_circle
-from django.http import Http404
+from django.core.mail import send_mail
+from django.conf import settings
 
 
+def send_match_mails(user_list):
+    for i in [0,1]:
+        safe_i = (i + 1) % 2
+        arg1 = user_list[safe_i].first_name
+        arg2 = user_list[safe_i].email
+        message = "Вы понравились {0}! Почта участника: {1}".format(arg1, arg2)
+        recipient = []
+        recipient.append(user_list[i].email)
+        print(recipient)
+        print(settings.DEFAULT_FROM_EMAIL)
+        send_mail('Great news from Tinder for Poor App!',
+                  message,
+                  settings.DEFAULT_FROM_EMAIL,
+                  recipient,
+                  fail_silently=False,
+        )
 
 # Создаём класс RegistrUserView
 class RegistrUserView(CreateAPIView):
@@ -105,6 +121,7 @@ def UserMatchView(request, pk):
         if user.id in liked_user_list:
             st = "It's a match! His or her email: "
             data['1'] = st + liked_user.email #Если мэтч, показываем в ответе почту
+            send_match_mails([user, liked_user])
             return Response(data, status=status.HTTP_200_OK)
     else:
         data['1'] = "User not found"

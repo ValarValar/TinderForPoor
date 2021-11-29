@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from .watermark import watermark
-from geopy.distance import great_circle
 import json
 
 ### Обертка для накладывания вотермарки. Принимает File, возвращает файл BytesIO
