@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from .watermark import watermark
 import json
+from django.conf import settings
 
 ### Обертка для накладывания вотермарки. Принимает File, возвращает файл BytesIO
 def watermarkImage(image_file):
