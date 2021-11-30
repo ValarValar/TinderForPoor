@@ -61,5 +61,5 @@ class UserSerializer(serializers.ModelSerializer):
         # Поля модели которые будем использовать
         model = User
         # Назначаем поля которые будем использовать
-        fields = ['id', 'first_name', 'last_name', 'sex', 'avatar']
+        fields = ['id', 'first_name', 'last_name', 'sex', 'avatar', 'liked_list']
 

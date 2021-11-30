@@ -25,8 +25,6 @@ def send_match_mails(user_list):
         message = "Вы понравились {0}! Почта участника: {1}".format(arg1, arg2)
         recipient = []
         recipient.append(user_list[i].email)
-        print(recipient)
-        print(settings.DEFAULT_FROM_EMAIL)
         send_mail('Great news from Tinder for Poor App!',
                   message,
                   settings.DEFAULT_FROM_EMAIL,
@@ -105,19 +103,19 @@ def UserMatchView(request, pk):
         data['1'] = "You shouldn't like usrself"
         return Response(data, status=status.HTTP_200_OK)
     user = User.objects.get(id=request.user.id)
-    own_liked_list = user.get_liked_list()
+    own_liked_list = user.liked_list
     liked_user = User.objects.filter(id=pk)
 
     if liked_user:
         liked_user = User.objects.get(id=pk)
         if not (pk in own_liked_list):
             own_liked_list.append(pk)
-            user.set_liked_list(own_liked_list)  #Добавили к текущему юзеру в список лайков
+            user.liked_list = own_liked_list  #Добавили к текущему юзеру в список лайков
             user.save(update_fields=['liked_list'])
 
     data = {}
     if liked_user:
-        liked_user_list = liked_user.get_liked_list()
+        liked_user_list = liked_user.liked_list
         if user.id in liked_user_list:
             st = "It's a match! His or her email: "
             data['1'] = st + liked_user.email #Если мэтч, показываем в ответе почту

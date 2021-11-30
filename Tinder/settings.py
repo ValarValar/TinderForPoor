@@ -29,8 +29,8 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-aklyeb!18)ja43
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-#DEBUG = True
-DEBUG = False
+DEBUG = True
+#DEBUG = False
 #DEBUG = bool(os.environ.get('DJANGO_DEBUG', True))
 
 # Application definition
@@ -170,7 +170,7 @@ AWS_QUERYSTRING_AUTH = False #This will make sure that the file URL does not hav
 AWS_S3_CUSTOM_DOMAIN = AWS_STORAGE_BUCKET_NAME + '.s3.amazonaws.com'
 #static media settings
 #STATIC_URL = 'https://' + AWS_STORAGE_BUCKET_NAME + '.s3.amazonaws.com/'
-MEDIA_URL = STATIC_URL + 'media/'
+#MEDIA_URL = STATIC_URL + 'media/'
 STATICFILES_DIRS = ( os.path.join(BASE_DIR, "static"), )
 STATIC_ROOT = 'staticfiles'
 ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'

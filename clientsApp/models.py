@@ -1,8 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from .watermark import watermark
-import json
-from django.conf import settings
+
+from random import randint
+def random_long():
+    return randint(-179, 179) + randint(0, 999) / 1000
+
+def random_lat():
+    return randint(-89, 89) + randint(0, 999) / 1000
 
 ### Обертка для накладывания вотермарки. Принимает File, возвращает файл BytesIO
 def watermarkImage(image_file):
@@ -42,9 +47,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=30,)
     last_name = models.CharField(max_length=30)
     is_staff = models.BooleanField(default=False)
-    liked_list = models.TextField(blank=True, default="[-1, -2]")
-    longitude = models.DecimalField(default=0, decimal_places=3, max_digits=6)
-    latitude = models.DecimalField(default=0, decimal_places=3, max_digits=6)
+    liked_list = models.JSONField(blank=True, default=list)
+    longitude = models.DecimalField(default=random_long(), decimal_places=3, max_digits=6)
+    latitude = models.DecimalField(default=random_lat(), decimal_places=3, max_digits=6)
 
     def user_directory_path(instance, filename):
         # путь, куда будет осуществлена загрузка MEDIA_ROOT/user_<id>_<filename>
@@ -76,7 +81,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     def save(self, *args, **kwargs):
 
         if self.avatar:
-            print(self.avatar)
             #Сохраняем аватарку на лету с вотермаркой
             self.avatar = watermarkImage(self.avatar.file)
 
@@ -91,9 +95,3 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_short_name(self):
         return self.first_name
-
-    def set_liked_list(self, x):
-        self.liked_list = json.dumps(x)
-
-    def get_liked_list(self):
-        return json.loads(self.liked_list)
